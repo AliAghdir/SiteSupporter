@@ -1,9 +1,67 @@
-var connection = new signalR.HubConnectionBuilder().withUrl('/chatHub').build();
+var chatterName = "Visitor";
 
-//Disable the send button until connection is established.
-document.getElementById('sendButton').disabled = true;
 
-connection.on('ReceiveMessage', renderMessage);
+var dialogEL = document.getElementById('chatDialog');
+
+//Initialize SignalR
+var connection = new signalR.HubConnectionBuilder()
+    .withUrl('/chatHub')
+    .build();
+
+connection.on('ReciveMessage', renderMessage);
+
+connection.onclose(function () {
+    onDisconnected();
+    console.log('ReConnecting in 5 Second ...');
+    setTimeout(startConnection, 5000);
+});
+
+function startConnection() {
+    connection.start().then(onConnected).catch(function (err) {
+        console.log(err);
+    });
+}
+
+function onDisconnected() {
+    dialogEL.classList.add('disconnected');
+}
+
+function onConnected() {
+    dialogEL.classList.remove('disconnected');
+
+    var messageTextBox = document.getElementById('messageTextBox');
+    messageTextBox.focus();
+}
+
+function ready() {
+    var chatForm = document.getElementById('chatForm');
+    chatForm.addEventListener('submit',
+        function (e) {
+            e.preventDefault();
+            var text = e.target[0].value;
+            e.target[0].value = '';
+            sendMessage(text);
+        });
+
+    var welcomePanelFormEL = document.getElementById('chatWelcomePanel');
+    welcomePanelFormEL.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        var name = e.target[0].value;
+        if (name && name.length) {
+            welcomePanelFormEL.style.display = 'none';
+            chatterName = name;
+            startConnection();
+        }
+    });
+
+}
+
+function sendMessage(text) {
+    if (text && text.length) {
+        connection.invoke('SendMessage', chatterName, text);
+    }
+}
 
 function renderMessage(name, message, time) {
     var nameSpan = document.createElement('span');
@@ -32,28 +90,5 @@ function renderMessage(name, message, time) {
     chatHistory.scrollTop = chatHistory.scrollHeight - chatHistory.clientHeight;
 }
 
-connection.start().then(function () {
-    document.getElementById("sendButton").disabled = false;
-}).catch(function (err) {
-    return console.error(err.toString());
-});
-
-function ready() {
-    var chatForm = document.getElementById('chatForm');
-    chatForm.addEventListener('submit',
-        function (e) {
-            e.preventDefault();
-            var text = e.target[0].value;
-            e.target[0].value = '';
-            sendMessage('ali',text);
-        });
-}
-
-function sendMessage(name, text) {
-    if (text && text.length) {
-        connection.invoke('SendMessage',name,text)
-    }
-} 
 
 document.addEventListener('DOMContentLoaded', ready);
-     

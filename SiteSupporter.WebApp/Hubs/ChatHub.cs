@@ -7,7 +7,7 @@ namespace SiteSupporter.WebApp.Hubs
     {
         public override async Task OnConnectedAsync()
         {
-            await Clients.Caller.SendAsync("ReceiveMessage", "Support", "Hello! What can we help you?", DateTimeOffset.UtcNow);
+            await Clients.Caller.SendAsync("ReciveMessage", "Support", "Hello! What can we help you?", DateTimeOffset.UtcNow);
             await base.OnConnectedAsync();
         }
 
@@ -19,7 +19,7 @@ namespace SiteSupporter.WebApp.Hubs
                 MessageBody = message,
                 Time = DateTimeOffset.UtcNow
             };
-            await Clients.All.SendAsync("ReceiveMessage", chatMessage.FullName, chatMessage.MessageBody, chatMessage.Time);
+            await Clients.All.SendAsync("ReciveMessage", chatMessage.FullName, chatMessage.MessageBody, chatMessage.Time);
         }
     }
 }
