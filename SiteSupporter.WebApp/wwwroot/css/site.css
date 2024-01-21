@@ -1,22 +1,31 @@
-html {
-  font-size: 14px;
+
+
+
+
+
+#chatHistory {
+    margin-top: 20px;
+    list-style-type: none;
+    text-align: left;
+    padding-top: 15px;
+    margin-bottom: 15px;
+    height: 285px;
+    overflow-y: auto;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
+    #chatHistory li {
+        padding-bottom: 15px;
+    }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
+        #chatHistory li .name {
+            font-weight: bold;
+            margin-right: 5px;
+        }
 
-html {
-  position: relative;
-  min-height: 100%;
-}
+        #chatHistory li .time {
+            color: #999;
+        }
 
-body {
-  margin-bottom: 60px;
-}
+        #chatHistory li .message {
+            padding-top: 5px;
+        }
